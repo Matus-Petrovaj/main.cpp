@@ -1,5 +1,5 @@
 /*
-Meno a priezvisko:
+Meno a priezvisko: Matúš Petrovaj
 
 POKYNY:
 (1)  Implementujte funkcie tak, aby splnali popis pri ich deklaraciach.
@@ -19,6 +19,8 @@ POKYNY:
 
 #include <iostream>
 #include <climits>
+#include <cstring>
+#include <new>
 
 using namespace std;
 
@@ -63,7 +65,7 @@ enum class Result {
 
 
 void print(const Position *position) {
-     std:cout << "x: " << position->x << ", y: " << position->y << endl;
+    cout << "x: " << position->x << ", y: " << position->y;
 }
 
 
@@ -74,11 +76,11 @@ void print(const Position *position) {
     Implementujte rovnaku funkcionalitu ako v prvom priklade. Rozdiel je len typ parametra funkcie.
 */
 
-/*
+
 void print(const Position &position) {
-    std:cout << "x: " << position.x << ", y: " << position.y << endl;
+    cout << "x: " << position.x << ", y: " << position.y;
 }
- */
+
 
 //-------------------------------------------------------------------------------------------------
 // 3. ULOHA (0.4 bodu)
@@ -95,7 +97,7 @@ void print(const Position &position) {
         Nemusite osetrovat moznost chybnych udajov na standardnom vstupe.
  */
 void readFromStandardInput(Position *position) {
-    std:cin >> position->x >> position->y;
+    cin >> position->x >> position->y;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -124,11 +126,11 @@ void readFromStandardInput(Position *position) {
 */
 int maximum(const int *data, std::size_t length, Result *result) {
 
-    int largest = 0;
-    int tmp = 0;
+    int largest = INT_MIN;
+    int tmp = INT_MIN;
 
     if(length == 0){
-        Result::FAILURE;
+        Result r1 = Result::FAILURE;
         return INT_MIN; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
     }
 
@@ -140,10 +142,10 @@ int maximum(const int *data, std::size_t length, Result *result) {
             }
 
         }
-        Result::SUCCESS;
+        Result r2 = Result::SUCCESS;
+        // cout << largest;
         return largest;
     }
-
     // return INT_MIN; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
 }
 
@@ -166,8 +168,18 @@ int maximum(const int *data, std::size_t length, Result *result) {
         - vstup: -500  => vystup: 4
 */
 int numDigits(int value) {
-    // TODO
-    return -1; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
+
+    int value_test = value;
+    int cnt = 1;
+    if(value_test < 0){
+        cnt++;
+    }
+    while(abs(value_test) >= 10){
+        value_test = value_test / 10;
+        cnt++;
+    }
+    // cout << cnt;
+    return cnt; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -197,7 +209,31 @@ int numDigits(int value) {
         Vsimnite si pretazenie funkcie. Tento zdrojovy subor obsahuje 3 funkcie s nazvom 'print'.
 */
 void print(const Date *date, const char *format) {
-    // TODO
+    int D = date->day;
+    int M = date->month;
+    int Y = date->year;
+
+    // cout << strlen(format);
+
+    for(int i = 0; i < strlen(format); i++){
+        if(format[i] == *"D"){
+            cout << D;
+        }
+        else if(format[i] == *"M"){
+            cout << M;
+        }
+        else if(format[i] == *"Y"){
+            cout << Y;
+        }
+        else{
+            cout << format[i];
+        }
+    }
+
+    // cout << D;
+    // cout << M;
+    // cout << Y;
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -216,8 +252,13 @@ void print(const Date *date, const char *format) {
         Adresa na dynamicky alokovany datum, ktoreho obsah je dany parametrami
 */
 Date* create(int day, int month, int year) {
-    // TODO
-    return nullptr; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
+
+    Date *d1 = new Date;
+    d1->day = day;
+    d1->month = month;
+    d1->year = year;
+
+    return d1; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -235,7 +276,10 @@ Date* create(int day, int month, int year) {
         (*date) ma hodnotu 'nullptr'.
 */
 void destroy(Date **date) {
-    // TODO
+
+    delete *date;
+    *date = nullptr;
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -263,8 +307,19 @@ void destroy(Date **date) {
             - nepriestupne roky: 1500, 1700, 1800, 1900, 2100, 2200, 2300, 2500
 */
 bool isInLeapYear(const Date *date) {
-    // TODO
-    return false; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
+
+    if(date->year % 100 == 0 && date->year % 400 != 0){
+        // cout << "0";
+        return false;
+    }
+    else if(date->year > 0 && date->year % 4 == 0){
+        // cout << "1";
+        return true;
+    }
+    else{
+        // cout << "0";
+        return false;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -289,7 +344,21 @@ bool isInLeapYear(const Date *date) {
         Rok v datume je kladne cislo
 */
 bool isValid(const Date *date) {
-    // TODO
+
+    int months[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if(isInLeapYear(date)){
+        months[1] = 29;
+    }
+
+    if(date->year >= 0){
+        if(1 <= date->month && date->month <= 12){
+            if(date->day >= 1 && date->day <= months[date->month - 1]){
+                return true;
+            }
+        }
+    }
+
     return false; // tento riadok zmente podla zadania, je tu len kvoli kompilacii
 }
 
@@ -301,11 +370,12 @@ bool isValid(const Date *date) {
 
 int main() {
 
-    /* U 1/2
+    /*
+    U 1/2
     Position position_1;
     position_1.x = 10;
     position_1.y = 20;
-    print(position_1);
+    print(&position_1);
      */
 
     /* U 3
@@ -314,9 +384,45 @@ int main() {
     print(&position_1);
     */
 
+    /* U 4
     Result res;
-    const int vstup[] = {1, 2, 5, 0, 1};
-    maximum(vstup, 5, &res);
+    const int vstup_1[] = {1, 2, 5, 0, 1};
+    const int vstup_2[] = {-50, -1, 10};
+    const int vstup_3[] = {0};
+
+    cout << maximum(vstup_1, 5, &res);
+     */
+
+
+    /* U 5
+    cout << numDigits(-0);
+    */
+
+
+    /*
+    Date date_1;
+    date_1.day = 30;
+    date_1.month = 3;
+    date_1.year = 2023;
+     */
+
+
+    /* U 6
+    const char* format_1 = "D.M.Y";
+    print(&date_1,format_1);
+    */
+
+    /* U 9
+    cout << isInLeapYear(&date_1);
+    */
+
+    /* U 10
+    cout << isValid(&date_1);
+     */
+
+    /* U 7
+    cout << create(16, 1, 2022);
+     */
 
     return 0;
 }
